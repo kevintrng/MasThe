@@ -41,7 +41,7 @@ class Threads:
         self.start_date = self.data.datetime.max()
         
         if self.start_date.date() == self.dt_today-datetime.timedelta(days=1):
-            return print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: DailyThreads up to date!")
+            return print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: DailyThreads up to date!\n")
         else:
             ###Fetch newest dailythreads from last recorded date
             dailythreads = getThreadsbyFlair(reddit, "wallstreetbets", "Daily Discussion Thread", "Daily Discussion",
@@ -86,7 +86,7 @@ class Threads:
         self.start_date = self.data.date.max()
         
         if self.start_date.month+1 == self.dt_today.month:
-            return print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Subreddit mentions up to date (until month {self.start_date.month})")
+            return print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Subreddit mentions up to date (until month {self.start_date.month})\n")
         
         ###Get monthly ranges organized in list of tuples (start_of_month, end_of_month)
         from_to_list = [(datetime.datetime(2021,i,1),
@@ -128,12 +128,13 @@ class Threads:
 def main():
     ###Initialise class
     download = Threads()
-    ###Megathreads
-    download.getMegathreads('gme_megathreads.csv')
-    ###Dailythreads
-    download.getDailyThreads('gme_dailythreads.csv')
-    ###Subreddit Mentions
-    download.getSubredditMentions('postcounter.csv')
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        ##Megathreads
+        executor.submit(download.getMegathreads, 'gme_megathreads.csv')
+        ##DailyThreads
+        executor.submit(download.getDailyThreads, 'gme_dailythreads.csv')
+        ##Subreddit Mentions
+        executor.submit(download.getSubredditMentions, 'postcounter.csv')
     
 #---------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------
