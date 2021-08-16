@@ -4,6 +4,8 @@ from gmefun import *
 import prawcore
 import os
 
+import concurrent.futures
+
 class Threads:
     
     ###Setup paths and today's date
@@ -45,28 +47,32 @@ class Threads:
             dailythreads = getThreadsbyFlair(reddit, "wallstreetbets", "Daily Discussion Thread", "Daily Discussion",
                                              self.start_date, self.dt_today, lmt = 1000)
 
-
             ###Transform datetime column from utc timestamp to datetime format
             dailythreads['datetime'] = [datetime.datetime.utcfromtimestamp(dt) for dt in dailythreads["created"]]
 
             ###Go through dailythreads and fetch mentions up to 1000 comments for each thread
             mentions = []
             keywords = ['GME','gme','Gamestop','GameStop','gamestop','GAMESTOP','$GME']
-
-            for thread in tqdm(dailythreads.id, colour = 'green'):
-                ##Handle exceptions for depth of the comments tree
-                #...if the request is TooLarge default to zero depth (less comments)
+            
+            ###Helper function to be used in threading
+            def Mentions(dailythread):
                 try:
-                    mentions.append(getNumberOfMentions(thread, keywords, lmt = 1000, depth = 5))
+                    mentions.append(getNumberOfMentions(dailythread, keywords, lmt = 1000, depth = 5))
                 except prawcore.exceptions.TooLarge:
-                    mentions.append(getNumberOfMentions(thread, keywords, lmt = 1000, depth = 0))
+                    mentions.append(getNumberOfMentions(dailythread, keywords, lmt = 1000, depth = 0))
+            ###Multithreading calls to each dailythread using map
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                list(tqdm(executor.map(Mentions, dailythreads.id), total = len(dailythreads.id)))
+            
+            ###WARNING: Multithreading may results in inordered entries with respect to date!
             ###Merge dataframes and mentions
             dailythreads = pd.concat([dailythreads,pd.DataFrame(mentions)], axis = 1)
             ###Compute percentage of mentions
             dailythreads['pct_mention'] = dailythreads['NumberOfMentions']/dailythreads['NumberOfComments']
-
+            
             ###Update dataframe
-            self.data = pd.concat([self.data, dailythreads], ignore_index = True)
+            ##Sort values via datetime and reset index to correct mismatch in entries
+            self.data = pd.concat([self.data, dailythreads], ignore_index = True).sort_values('datetime').reset_index(drop = True)
             self.data.to_csv(os.path.join(self.data_path, csv))
 
             print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Dailythreads Updated {dailythreads.shape[0]} rows added")
@@ -94,6 +100,7 @@ class Threads:
         query  = 'GME|GAMESTOP|GameStop|gamestop|Gamestop|$GME|Citadel|Melvin'
         post_counter = {sub:[] for sub in subreddits}
 
+        ###Helper function for MULTITHREADING
         ###Loop through subreddits and then date_ranges(organized in tuples)
         for sub in tqdm(subreddits, desc = 'SubLoop', colour = 'green'):
             for start, end in tqdm(from_to_list, desc = 'DateLoop', leave = False, colour = 'green'):
@@ -104,7 +111,6 @@ class Threads:
                 ###If no posts are found append array of zeroes
                 except ZeroDivisionError:
                     post_counter[sub].append({i:0 for i in ['found_posts','filtered_posts','pct_filtered']})
-        
         ###Merge list of pandas dataframes indexed by subreddit-date tuples
         post_counter = pd.concat([pd.DataFrame(post_counter[sub], index = dt_idx) for sub in subreddits], keys = subreddits)
         ###Re-transform date column to be saved and set as index
