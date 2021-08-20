@@ -42,10 +42,13 @@ def cleantext(text):
 def translate_emoji(text):
     ###Hard loop thru all emojis replace with the corresponding translation
     for emoji in UNICODE_EMOJI['en'].keys():
-        ###Adding extraspace at the end helps to seperate two emojis
-        ##extra whitespaces are then stripped
-        text = text.replace(emoji,"_".join(UNICODE_EMOJI['en'][emoji].replace(",","").replace(":","").split())+" ")
-        text = text.strip()
+        if emoji in text:
+            ###Adding extraspace at the end helps to seperate two emojis
+            ##extra whitespaces are then stripped
+            text = text.replace(emoji,"_".join(UNICODE_EMOJI['en'][emoji].replace(",","").replace(":","").split())+" ")
+            text = text.strip()
+        else:
+            continue
     return text
 
 def remove_emoji(string):
@@ -188,7 +191,10 @@ class TextAnalysis:
         Named Entity Recognition chunking method. For each row returns list of specified named entities.
         >2min runtime for 42k long dataframe
         '''
-        return sub_apr.data[column].apply(get_chunks, args = [ne_type])
+        orgs = sub_apr.data[column].apply(get_chunks, args = [ne_type])
+        orgs = [element for orgslist in orgs for element in orgslist]
+        
+        return FreqDist(orgs)
     ###Make frequence plots bar charts and simple plots
     def freq_plot(self, top, color = 'orange', title = ''):
         fig, ax = plt.subplots(figsize = (10,6))
