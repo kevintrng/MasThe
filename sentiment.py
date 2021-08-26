@@ -107,6 +107,8 @@ class TextAnalysis:
         self.data = pd.read_csv(file, index_col = 0)
         self.processed_data = None
         self.word_freq = None
+        self.chunks = None
+        self.bigrams = None
         
     ###Process Text using processData function
     def process_data(self, column, stopwords, emoji = False):
@@ -119,13 +121,18 @@ class TextAnalysis:
         elif column == 'title':
             self.processed_data = processText(self.data[column], stopwords, emoji)
     
-    def getBigrams(self):
-            
-        self.bigrams = self.processed_data.tokens_list.apply(lambda x: [word for word in nltk.bigrams(x)])
-        self.processed_data['bigrams_list'] = self.bigrams
-        ###Flatten
-        ##List of tuples --> FreqDist to get frequencies
-        bigrams = [element for bigrams_list in self.bigrams for element in bigrams_list]
+    def getNgrams(self, n = 2):
+        
+        if n == 2:
+            self.processed_data['bigrams_list'] = self.processed_data.tokens_list.apply(lambda x: [word for word in nltk.bigrams(x)])
+            self.bigrams = [element for elementlist in self.processed_data['bigrams_list'] for element in elementlist]
+            return FreqDist(self.bigrams).most_common(5)
+        elif n == 3:
+            self.processed_data['trigrams_list'] = self.processed_data.tokens_list.apply(lambda x: [word for word in nltk.trigrams(x)])
+            self.trigrams = [element for elementlist in self.processed_data['trigrams_list'] for element in elementlist]
+            return FreqDist(self.trigrams).most_common(5)
+
+
     
     def get_TickerMentions(self, plot = False, top = None, cmap = plt.rcParams['image.cmap']):
         '''
@@ -191,10 +198,9 @@ class TextAnalysis:
         Named Entity Recognition chunking method. For each row returns list of specified named entities.
         >2min runtime for 42k long dataframe
         '''
-        orgs = sub_apr.data[column].apply(get_chunks, args = [ne_type])
-        orgs = [element for orgslist in orgs for element in orgslist]
-        
-        return FreqDist(orgs)
+        chunks = self.data[column].apply(get_chunks, args = [ne_type])
+        self.chunks = [element for orgslist in chunks for element in orgslist]
+        return FreqDist(self.chunks)
     ###Make frequence plots bar charts and simple plots
     def freq_plot(self, top, color = 'orange', title = ''):
         fig, ax = plt.subplots(figsize = (10,6))
