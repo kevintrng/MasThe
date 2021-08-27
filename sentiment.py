@@ -104,7 +104,8 @@ def get_chunks(text, label):
 
 class TextAnalysis:
     def __init__(self, file):
-        self.data = pd.read_csv(file, index_col = 0)
+        self.raw_data = pd.read_csv(file, index_col = 0)
+        self.data = self.raw_data.drop_duplicates(subset = 'title', keep = 'last')
         self.processed_data = None
         self.word_freq = None
         self.chunks = None
