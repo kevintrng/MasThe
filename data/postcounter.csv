@@ -18,6 +18,7 @@ gme,Apr21,8373,334,0.03989012301445121
 gme,May21,4783,146,0.030524775245661717
 gme,Jun21,3414,110,0.03222026947861746
 gme,Jul21,2472,102,0.0412621359223301
+gme,Aug21,1929,102,0.05287713841368585
 investing,Jan20,2,0,0.0
 investing,Feb20,5,0,0.0
 investing,Mar20,10,0,0.0
@@ -36,7 +37,8 @@ investing,Mar21,54,2,0.037037037037037035
 investing,Apr21,20,1,0.05
 investing,May21,30,0,0.0
 investing,Jun21,63,1,0.015873015873015872
-investing,Jul21,24,1,0.041666666666666664
+investing,Jul21,24,1,0.04166666666666666
+investing,Aug21,19,1,0.05263157894736842
 options,Jan20,0,0,0.0
 options,Feb20,1,0,0.0
 options,Mar20,13,0,0.0
@@ -56,6 +58,7 @@ options,Apr21,67,2,0.02985074626865672
 options,May21,56,5,0.08928571428571429
 options,Jun21,77,3,0.03896103896103896
 options,Jul21,36,2,0.05555555555555555
+options,Aug21,39,3,0.07692307692307693
 pennystocks,Jan20,0,0,0.0
 pennystocks,Feb20,0,0,0.0
 pennystocks,Mar20,2,0,0.0
@@ -75,6 +78,7 @@ pennystocks,Apr21,18,0,0.0
 pennystocks,May21,12,0,0.0
 pennystocks,Jun21,29,0,0.0
 pennystocks,Jul21,15,0,0.0
+pennystocks,Aug21,8,0,0.0
 robinhood,Jan20,1,0,0.0
 robinhood,Feb20,1,0,0.0
 robinhood,Mar20,1,0,0.0
@@ -94,6 +98,7 @@ robinhood,Apr21,19,0,0.0
 robinhood,May21,12,0,0.0
 robinhood,Jun21,15,0,0.0
 robinhood,Jul21,11,0,0.0
+robinhood,Aug21,6,0,0.0
 robinhoodpennystocks,Jan20,0,0,0.0
 robinhoodpennystocks,Feb20,1,0,0.0
 robinhoodpennystocks,Mar20,15,0,0.0
@@ -113,6 +118,7 @@ robinhoodpennystocks,Apr21,12,0,0.0
 robinhoodpennystocks,May21,9,0,0.0
 robinhoodpennystocks,Jun21,12,0,0.0
 robinhoodpennystocks,Jul21,5,0,0.0
+robinhoodpennystocks,Aug21,9,0,0.0
 stockmarket,Jan20,1,0,0.0
 stockmarket,Feb20,0,0,0.0
 stockmarket,Mar20,8,1,0.125
@@ -132,6 +138,7 @@ stockmarket,Apr21,140,3,0.021428571428571432
 stockmarket,May21,84,3,0.03571428571428571
 stockmarket,Jun21,183,9,0.04918032786885247
 stockmarket,Jul21,100,4,0.04
+stockmarket,Aug21,63,3,0.047619047619047616
 stocks,Jan20,5,0,0.0
 stocks,Feb20,5,0,0.0
 stocks,Mar20,19,0,0.0
@@ -151,6 +158,7 @@ stocks,Apr21,130,7,0.05384615384615385
 stocks,May21,125,6,0.048
 stocks,Jun21,139,14,0.10071942446043164
 stocks,Jul21,89,4,0.0449438202247191
+stocks,Aug21,59,2,0.03389830508474576
 thetagang,Jan20,0,0,0.0
 thetagang,Feb20,0,0,0.0
 thetagang,Mar20,0,0,0.0
@@ -170,6 +178,7 @@ thetagang,Apr21,40,3,0.075
 thetagang,May21,30,1,0.03333333333333333
 thetagang,Jun21,35,3,0.08571428571428573
 thetagang,Jul21,15,2,0.13333333333333333
+thetagang,Aug21,24,2,0.08333333333333333
 wallstreetbets,Jan20,27,0,0.0
 wallstreetbets,Feb20,37,1,0.027027027027027032
 wallstreetbets,Mar20,119,7,0.05882352941176471
@@ -189,6 +198,7 @@ wallstreetbets,Apr21,4682,141,0.030115335326783427
 wallstreetbets,May21,3959,113,0.028542561252841624
 wallstreetbets,Jun21,5233,164,0.031339575769157274
 wallstreetbets,Jul21,1613,60,0.03719776813391197
+wallstreetbets,Aug21,1265,47,0.03715415019762846
 wallstreetbetsnew,Jan20,0,0,0.0
 wallstreetbetsnew,Feb20,0,0,0.0
 wallstreetbetsnew,Mar20,0,0,0.0
@@ -208,3 +218,4 @@ wallstreetbetsnew,Apr21,695,21,0.030215827338129494
 wallstreetbetsnew,May21,488,14,0.02868852459016393
 wallstreetbetsnew,Jun21,544,9,0.016544117647058824
 wallstreetbetsnew,Jul21,209,2,0.009569377990430622
+wallstreetbetsnew,Aug21,103,2,0.019417475728155338
