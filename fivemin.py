@@ -5,6 +5,7 @@ import datetime as dt
 import pandas as pd
 from findata import get_intradaydata
 import os
+import sys
 
 dirpath = os.path.dirname(__file__)
 tickers = ['GME','AMC','BB','NOK',"CLOV"]
@@ -16,8 +17,7 @@ if __name__ == '__main__':
     end_date = dt.date.today()-dt.timedelta(days = 1)
     
     if (end_date-start_date).days < 3:
-        print(f"ABORTED: Data have been updated in the last 2 days")
-        quit()
+        sys.exit("ABORTED: Data have been updated in the last 2 days")
     
     updated_data = yf.download(" ".join(tickers), interval = '5m', start = start_date, end = end_date)
     data = pd.concat([data, updated_data], axis = 0)

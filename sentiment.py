@@ -9,6 +9,7 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.stem import PorterStemmer
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.probability import FreqDist
+from nltk.collocations import *
 import contractions
 import re
 import string
@@ -190,8 +191,6 @@ class TextAnalysis:
     def get_LemmaFrequency(self):
         lemmas = self.process_data.tokens_list.apply(lambda x: [lem.lemmatize(token, "v") for token in x])
         self.lemma_freq = FreqDist([element for tokenlist in lemmas for element in tokenlist])
-    ###Return TOP RESULTS
-    #....
     
     ###Named Entity Recognition
     def chunking_NER(self, column, ne_type):
@@ -202,6 +201,28 @@ class TextAnalysis:
         chunks = self.data[column].apply(get_chunks, args = [ne_type])
         self.chunks = [element for orgslist in chunks for element in orgslist]
         return FreqDist(self.chunks)
+    
+    ##Collocations and Associations Measures
+    def get_Collocations(self, freq_limit = 5, method = 'likelihood'):
+        
+        '''
+        Prints 10 top bigram collocations based on the method of selections, bigrams must at least appear 'freq_limit'-times in the documents.
+        '''
+        bigram_measures = nltk.collocations.BigramAssocMeasures()
+        tokens = [element for elementlist in self.processed_data.tokens_list for element in elementlist]
+        ##Methods
+        self.finder = BigramCollocationFinder.from_documents(self.processed_data.tokens_list)
+        self.finder.apply_freq_filter(freq_limit)
+        
+        if method == 'likelihood':
+            self.collocations = self.finder.nbest(bigram_measures.likelihood_ratio, 10)
+        elif method == 'pmi':
+            self.collocations = self.finder.nbest(bigram_measures.pmi, 10)
+        elif method == 'freq':
+            self.collocations = self.finder.nbest(bigram_measures.raw_freq, 10)
+        for word in self.collocations:
+            print(word)
+        
     ###Make frequence plots bar charts and simple plots
     def freq_plot(self, top, color = 'orange', title = ''):
         fig, ax = plt.subplots(figsize = (10,6))
@@ -214,8 +235,7 @@ class TextAnalysis:
         ax.set_ylabel('Count')
         
         ax.set_title(title)
-    ###WordCloud
-    
+    ###WordCloud    
     def wordcloud(self, stopwords, backdrop = 'white', cmap = 'viridis'):
         fig, ax = plt.subplots(figsize = (10,6))
         
