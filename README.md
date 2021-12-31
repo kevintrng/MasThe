@@ -8,3 +8,21 @@ WARNING: The interaction with the Reddit API requires setup of web application b
  - `fivemin.py`: Automated script for downloading monthly 5-minute interval intraday data
  - `gmefun.py`: Script containing all necessary functions interacting with Reddit API thru praw and psaw modules
  - `threads.py`: Script for updating megathreads, dailythreads and number of mentions per month in csv files
+ - `wsb_submissions.py`: Script scrapes _r/wallstreetebets_ submissions going over individual months scrapes all submissions found using GME related keywords. Data are saved in the format `submissions_%b`.
+ 
+ 
+ Data Description
+ 
+ - `gme_dailythreads.csv` and `gme_dailythreads_2020.csv`: contain data on scraped _r/wallstreetbets_ GENERAL daily discussion threads
+ - `gme_megathreads.csv`: Large discussion threads related to GME creating during most active periods
+ - `postcounter.csv`: Scraping number of posts only from various finance subreddits
+ - `submissions_\%b`: Specific posts on WSB related to GME 
+ - `intraday`: intraday data (DEPRECIATED due to non-continuity)
+ - `fivemin`: five-minute intraday data for sample of stocks (missing data)
+ - `EQT.xlsx`: excel file containing Bloomberg downloaded data
+ 	- 30-min intraday data
+	- Historical and Implied Volatility
+	- News Sentiment Series
+	- Twitter Sentiment Series for GME
+- `options`: option chain data manually downloaded each expiry before market open (NOT YET MERGED and most data kept local)
+ 
