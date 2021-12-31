@@ -19,19 +19,19 @@ class Threads:
         self.data = None
     
     ###Update megathreads
-    def getMegathreads(self, csv):
-        self.path = os.path.join(self.data_path,csv)
-        self.data = pd.read_csv(self.path, index_col = 0, parse_dates = ['datetime']).sort_index()
-        self.start_date = self.data.datetime.max()
+    def getMegathreads(self, mega_csv):
+        self.path = os.path.join(self.data_path,mega_csv)
+        self.data_mega = pd.read_csv(self.path, index_col = 0, parse_dates = ['datetime']).sort_index()
+        self.start_date_mega = self.data_mega.datetime.max()
         
         ###Using reddit global variable fetch GME megathreads
-        megathreads = psaw_getPosts(reddit,'wallstreetbets','GME Megathread', afterdate = self.start_date,
+        megathreads = psaw_getPosts(reddit,'wallstreetbets','GME Megathread', afterdate = self.start_date_mega,
                                     beforedate = self.dt_today, lmt = 1000, lmt_comms = 100)
         megathreads['datetime'] = [datetime.datetime.utcfromtimestamp(dt) for dt in megathreads["created"]]
-        self.data = pd.concat([self.data, megathreads], ignore_index = True)
+        self.data_mega = pd.concat([self.data_mega, megathreads], ignore_index = True)
         
         ###Save the updated csv file
-        self.data.to_csv(os.path.join(self.data_path, csv))
+        self.data_mega.to_csv(os.path.join(self.data_path, mega_csv))
         print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Megathreads Updated {megathreads.shape[0]} rows added")
     
     ###Update dailythreads
@@ -78,9 +78,9 @@ class Threads:
             print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Dailythreads Updated {dailythreads.shape[0]} rows added")
 
     ###Updates postocunter (individual subreddit mentions)
-    def getSubredditMentions(self, csv):
+    def getSubredditMentions(self, men_csv):
         ###Overall Subreddit Post Mentions
-        self.path = os.path.join(self.data_path, csv)
+        self.path = os.path.join(self.data_path, men_csv)
         self.data = pd.read_csv(self.path, index_col = 'subreddit', parse_dates=['date'],
                                 date_parser=lambda x: datetime.datetime.strptime(x, "%b%y"))
         self.start_date = self.data.date.max()
@@ -117,7 +117,7 @@ class Threads:
         self.data.date = self.data.date.apply(lambda x: x.strftime("%b%y"))
         self.data.set_index('date', append = True, inplace = True)
         self.data = pd.concat([self.data, post_counter]).sort_index(level = "subreddit", sort_remaining = False)
-        self.data.to_csv(os.path.join(self.data_path, csv))
+        self.data.to_csv(os.path.join(self.data_path, men_csv))
         
         print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Sub postcounter updated {post_counter.shape[0]} rows added")
 
@@ -131,11 +131,10 @@ def main():
     with concurrent.futures.ThreadPoolExecutor() as executor:
         ##Megathreads
         executor.submit(download.getMegathreads, 'gme_megathreads.csv')
-        ##DailyThreads
-        executor.submit(download.getDailyThreads, 'gme_dailythreads.csv')
         ##Subreddit Mentions
         executor.submit(download.getSubredditMentions, 'postcounter.csv')
-    
+    ##DailyThreads
+    download.getDailyThreads('gme_dailythreads.csv')
 #---------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------

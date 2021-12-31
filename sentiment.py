@@ -34,7 +34,13 @@ def cleantext(text):
     text = re.sub('\n','',re.sub(r'&#\S+',' ',re.sub(r'http\S+','', text)))
     ###Regular string cleaning
     ##Expand contractions, turn to lowercase, strip whitespace end and beginning
-    text = contractions.fix(text).lower().strip()
+#     text = contractions.fix(text).lower().strip()
+    try:
+        text = contractions.fix(text)
+    except Exception as e:
+        print(e)
+    finally:
+        text = text.lower().strip()
     ##Remove punctuation using translate
     text = text.translate(str.maketrans('', '', string.punctuation))
     ##Remove digits
@@ -106,7 +112,7 @@ def get_chunks(text, label):
 class TextAnalysis:
     def __init__(self, file):
         self.raw_data = pd.read_csv(file, index_col = 0)
-        self.data = self.raw_data.drop_duplicates(subset = 'title', keep = 'last')
+        self.data = self.raw_data.drop_duplicates(subset = 'title', keep = 'last').reset_index(drop = True)
         self.processed_data = None
         self.word_freq = None
         self.chunks = None
@@ -119,9 +125,9 @@ class TextAnalysis:
             ###Condition of non removed/deleted/empty post content
             cond = (self.data[column].notna()) & (self.data[column] !='[removed]') & (self.data[column] !='[deleted]')
             ###Process text
-            self.processed_data = processText(self.data.loc[cond, column], stopwords, emoji)
+            self.processed_data = processText(self.data.loc[cond, column].astype(str), stopwords, emoji)
         elif column == 'title':
-            self.processed_data = processText(self.data[column], stopwords, emoji)
+            self.processed_data = processText(self.data[column].astype(str), stopwords, emoji)
     
     def getNgrams(self, n = 2):
         
@@ -148,7 +154,7 @@ class TextAnalysis:
         ticker_mentions = {}
 
         ###Title loop
-        for text in self.data.title:
+        for text in self.data.title.astype(str):
             tickers = re.findall(r'\$\b[a-zA-Z]{1,5}\w\b', text)
             if tickers:
                 for ticker in tickers:
@@ -176,7 +182,7 @@ class TextAnalysis:
             for item, col in zip(data[:limit][::-1], colors):
                 word,count = item
                 ax.barh(y = re.sub('\$','',word), width = count, height = .8, color = col)
-            plt.show()
+            return fig
         else:
             return data
             
